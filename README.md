@@ -1,2 +1,1010 @@
 # trading-bot
 this is a deriv trading bot, inbuild strategies 100% profit. for access and instructions call 0742277252
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deriv Trading Bot</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #1abc9c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+        
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    header {
+        background: var(--primary);
+        color: white;
+        padding: 20px;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #e74c3c;
+    }
+    
+    .status-dot.connected {
+        background-color: #2ecc71;
+    }
+    
+    .dashboard {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .panel {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+    
+    .panel-header {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .panel-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary);
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+    }
+    
+    select, input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    
+    .btn {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary {
+        background: var(--secondary);
+        color: white;
+    }
+    
+    .btn-success {
+        background: var(--success);
+        color: white;
+    }
+    
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+    
+    .btn-warning {
+        background: var(--warning);
+        color: white;
+    }
+    
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--primary);
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #6c757d;
+    }
+    
+    .quote-display {
+        display: flex;
+        gap: 10px;
+        margin: 15px 0;
+    }
+    
+    .quote-box {
+        width: 60px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+    
+    .quote-trigger {
+        background: var(--warning);
+        color: white;
+    }
+    
+    .log-container {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        background: #1e272e;
+        color: #f5f6fa;
+        font-family: 'Courier New', monospace;
+        font-size: 13px;
+    }
+    
+    .log-entry {
+        margin-bottom: 5px;
+        padding: 3px 0;
+    }
+    
+    .log-time {
+        color: #a4b0be;
+    }
+    
+    .log-info {
+        color: #2ecc71;
+    }
+    
+    .log-warning {
+        color: #f39c12;
+    }
+    
+    .log-error {
+        color: #e74c3c;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    
+    th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    tr.current-level {
+        background: #e3f2fd;
+    }
+    
+    @media (max-width: 768px) {
+        .dashboard {
+            grid-template-columns: 1fr;
+        }
+    }
+</style></head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Deriv Trading Bot</h1>
+            <div class="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Disconnected</span>
+            </div>
+        </header>
+        
+    <div class="dashboard">
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Trading Controls</h2>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="balanceValue">$10000.00</div>
+                    <div class="stat-label">Balance</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="currentLevelValue">1</div>
+                    <div class="stat-label">Martingale Level</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="currentStakeValue">$0.35</div>
+                    <div class="stat-label">Current Stake</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="payoutValue">$0.31</div>
+                    <div class="stat-label">Payout</div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-success" id="startBotBtn">Start Bot</button>
+                <button class="btn btn-danger" id="stopBotBtn" disabled>Stop Bot</button>
+                <button class="btn btn-primary" id="applyStepperBtn"><b><i>Apply Stepper Strategy</i></b></button>
+            </div>
+            
+            <div class="form-group">
+                <label for="market">Market</label>
+                <select id="market">
+                    <option value="R_10">Volatility 10 Index</option>
+                    <option value="R_25">Volatility 25 Index</option>
+                    <option value="R_100">Volatility 100 Index</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="contractType">Contract Type</label>
+                <select id="contractType">
+                    <option value="DIGITODD">Odd</option>
+                    <option value="DIGITEVEN">Even</option>
+                    <option value="DIGITDIFF">Differs</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="differsSettings" style="display:none;">
+                <label>Differs Settings</label>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="lastDiffersBarrier">-</div>
+                        <div class="stat-label">Last Differs Barrier</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">Middle-digit</div>
+                        <div class="stat-label">Selection mode</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="duration">Duration (ticks)</label>
+                <input type="number" id="duration" value="1" min="1">
+            </div>
+            
+            <div class="form-group">
+                <label for="takeProfit">Take Profit ($)</label>
+                <input type="number" id="takeProfit" value="10" min="0" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="stopLoss">Stop Loss ($)</label>
+                <input type="number" id="stopLoss" value="30" min="0" step="0.01">
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" id="updateContractBtn">Update Parameters</button>
+                <button class="btn btn-warning" id="testContractBtn">Test Contract</button>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title" id="marketTitle">Volatility 10 Index</h2>
+            </div>
+            
+            <div class="form-group">
+                <label>Current Price</label>
+                <div class="stat-value" id="currentPriceDisplay">-</div>
+            </div>
+            
+            <div class="form-group">
+                <label>Recent Quotes</label>
+                <div class="quote-display" id="quoteContainer">
+                    <div class="quote-box">-</div>
+                    <div class="quote-box">-</div>
+                    <div class="quote-box">-</div>
+                    <div class="quote-box">-</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Trade Parameters</label>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="takeProfitValue">$10.00</div>
+                        <div class="stat-label">Take Profit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stopLossValue">$30.00</div>
+                        <div class="stat-label">Stop Loss</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel-header">
+                <h2 class="panel-title">Martingale Levels</h2>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Level</th>
+                            <th>Stake</th>
+                            <th>Payout</th>
+                        </tr>
+                    </thead>
+                    <tbody id="martingaleLevels">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="panel" style="margin-top: 20px;">
+        <div class="panel-header">
+            <h2 class="panel-title">Trading Log</h2>
+        </div>
+        <div class="log-container" id="logContainer">
+            <!-- Log entries will be added here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuration
+    const APP_ID = 86038;
+    const MARKETS = ['R_10', 'R_25', 'R_100'];
+    const PING_INTERVAL = 10000;
+    const RECONNECT_DELAY = 1000;
+    const TOKEN = 'peGD1ms5CGl83kO'; // Demo token
+
+    // Martingale stake amounts (payout here is assumed profit)
+    const martingaleSteps = [
+         { stake: 2.00, payout: 0.19 },
+        { stake: 24.00, payout: 2.32 },
+        { stake: 270.00, payout: 26.05 },
+    ];
+
+    // Trigger lists for different markets
+    const triggerLists = {
+        R_10: [0.000, 0.010, 0.020, 0.030, 0.040, 0.050, 0.060, 0.070, 0.080, 0.090, 0.101, 0.111, 0.121, 0.131, 0.141, 0.151, 0.161, 0.171, 0.181, 0.191, 0.202, 0.212, 0.222, 0.232, 0.242, 0.252, 0.262, 0.272, 0.282, 0.292, 0.303, 0.313, 0.323, 0.333, 0.343, 0.353, 0.363, 0.373, 0.383, 0.393, 0.404, 0.414, 0.424, 0.434, 0.444, 0.454, 0.464, 0.474, 0.484, 0.494, 0.505, 0.515, 0.525, 0.535, 0.545, 0.555, 0.565, 0.575, 0.585, 0.595, 0.606, 0.616, 0.626, 0.636, 0.646, 0.656, 0.666, 0.676, 0.686, 0.696, 0.707, 0.717, 0.727, 0.737, 0.747, 0.757, 0.767, 0.777, 0.787, 0.797, 0.808, 0.818, 0.828, 0.838, 0.848, 0.858, 0.868, 0.878, 0.888, 0.898, 0.909, 0.919, 0.929, 0.939, 0.949, 0.959, 0.969, 0.979, 0.989, 0.999],
+        R_25: [0.000, 0.010, 0.020, 0.030, 0.040, 0.050, 0.060, 0.070, 0.080, 0.090, 0.101, 0.111, 0.121, 0.131, 0.141, 0.151, 0.161, 0.171, 0.181, 0.191, 0.202, 0.212, 0.222, 0.232, 0.242, 0.252, 0.262, 0.272, 0.282, 0.292, 0.303, 0.313, 0.323, 0.333, 0.343, 0.353, 0.363, 0.373, 0.383, 0.393, 0.404, 0.414, 0.424, 0.434, 0.444, 0.454, 0.464, 0.474, 0.484, 0.494, 0.505, 0.515, 0.525, 0.535, 0.545, 0.555, 0.565, 0.575, 0.585, 0.595, 0.606, 0.616, 0.626, 0.636, 0.646, 0.656, 0.666, 0.676, 0.686, 0.696, 0.707, 0.717, 0.727, 0.737, 0.747, 0.757, 0.767, 0.777, 0.787, 0.797, 0.808, 0.818, 0.828, 0.838, 0.848, 0.858, 0.868, 0.878, 0.888, 0.898, 0.909, 0.919, 0.929, 0.939, 0.949, 0.959, 0.969, 0.979, 0.989, 0.999],
+        R_100: [0.00, 0.22, 0.44, 0.66, 0.88]
+    };
+
+    // Market display names mapping
+    const marketNames = {
+        'R_10': 'Volatility 10 Index',
+        'R_25': 'Volatility 25 Index',
+        'R_100': 'Volatility 100 Index'
+    };
+
+    // Data structures for tracking
+    const quotes = {
+        R_10: [],
+        R_25: [],
+        R_100: []
+    };
+
+    // Trading state
+    let ws = null;
+    let pingTimer = null;
+    let isDerivConnected = false;
+    let isStepperApplied = false;
+    let isBotRunning = false;
+    let currentBalance = 10000; // Default balance
+    let initialBalance = 0;
+    let currentMartingaleLevel = 0;
+    let currentPrice = 0;
+    let activeContracts = [];
+    let tradeOutcomes = [];
+    let currentStreak = { type: null, count: 0 };
+    let subscriptionId = null;
+    let pendingSimulation = null;
+    let virtualOutcomes = [];
+    let isNextReal = false;
+
+    let currentContract = {
+        market: 'R_10',
+        type: 'DIGITODD',
+        duration: 1,
+        takeProfit: 10,
+        stopLoss: 100
+    };
+
+    // Additional state for Differs
+    let lastDiffersBarrier = null;
+
+    // DOM elements
+    const startBotBtn = document.getElementById('startBotBtn');
+    const stopBotBtn = document.getElementById('stopBotBtn');
+    const updateContractBtn = document.getElementById('updateContractBtn');
+    const testContractBtn = document.getElementById('testContractBtn');
+    const applyStepperBtn = document.getElementById('applyStepperBtn');
+    const statusText = document.getElementById('statusText');
+    const statusDot = document.getElementById('statusDot');
+    const logContainer = document.getElementById('logContainer');
+    const balanceValue = document.getElementById('balanceValue');
+    const marketTitle = document.getElementById('marketTitle');
+    const quoteContainer = document.getElementById('quoteContainer');
+    const currentPriceDisplay = document.getElementById('currentPriceDisplay');
+    const diffSettingsEl = document.getElementById('differsSettings');
+    const lastDiffersBarrierEl = document.getElementById('lastDiffersBarrier');
+
+    // Add log message to the log container
+    function addLog(message, type = 'info') {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        const logEntry = document.createElement('div');
+        logEntry.className = `log-entry log-${type}`;
+        logEntry.innerHTML = `<span class="log-time">[${timeString}]</span> ${message}`;
+        logContainer.appendChild(logEntry);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    // Update Deriv connection status
+    function updateConnectionStatus(connected) {
+        isDerivConnected = connected;
+        statusDot.classList.toggle('connected', isDerivConnected);
+        statusText.textContent = isDerivConnected ? 'Connected' : 'Disconnected';
+    }
+
+    // Update contract display
+    function updateContractDisplay() {
+        // Update form values
+        document.getElementById('market').value = currentContract.market;
+        document.getElementById('contractType').value = currentContract.type;
+        document.getElementById('duration').value = currentContract.duration;
+        document.getElementById('takeProfit').value = currentContract.takeProfit;
+        document.getElementById('stopLoss').value = currentContract.stopLoss;
+        
+        // Update trade parameters
+        document.getElementById('takeProfitValue').textContent = `$${currentContract.takeProfit.toFixed(2)}`;
+        document.getElementById('stopLossValue').textContent = `$${currentContract.stopLoss.toFixed(2)}`;
+        
+        // Update market title
+        marketTitle.textContent = marketNames[currentContract.market];
+        
+        // Update martingale display
+        updateMartingaleDisplay();
+
+        // Show/hide differs settings
+        if (currentContract.type === 'DIGITDIFF') {
+            diffSettingsEl.style.display = 'block';
+        } else {
+            diffSettingsEl.style.display = 'none';
+        }
+        
+        // Update quote display for the new market
+        updateQuoteDisplay(currentContract.market);
+    }
+
+    // Update martingale levels display
+    function updateMartingaleDisplay() {
+        const martingaleLevels = document.getElementById('martingaleLevels');
+        martingaleLevels.innerHTML = '';
+        
+        martingaleSteps.forEach((step, index) => {
+            const row = document.createElement('tr');
+            if (index === currentMartingaleLevel) {
+                row.classList.add('current-level');
+            }
+            
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>$${step.stake.toFixed(2)}</td>
+                <td>$${step.payout.toFixed(2)}</td>
+            `;
+            
+            martingaleLevels.appendChild(row);
+        });
+        
+        // Update current level display
+        document.getElementById('currentLevelValue').textContent = currentMartingaleLevel + 1;
+        document.getElementById('currentStakeValue').textContent = `$${martingaleSteps[currentMartingaleLevel].stake.toFixed(2)}`;
+        document.getElementById('payoutValue').textContent = `$${martingaleSteps[currentMartingaleLevel].payout.toFixed(2)}`;
+    }
+
+    // Get pip size for market
+    function getPipSize(market) {
+        if (market === 'R_10' || market === 'R_25') return 3;
+        return 2;
+    }
+
+    // Check if a quote is a trigger quote
+    function isTriggerQuote(symbol, quote, pip_size) {
+        const triggerList = triggerLists[symbol];
+        if (!triggerList) return false;
+        
+        const fractional = quote - Math.floor(quote);
+        const quoteStr = fractional.toFixed(pip_size);
+        
+        return triggerList.some(trigger => {
+            const triggerStr = trigger.toFixed(pip_size);
+            return quoteStr === triggerStr;
+        });
+    }
+
+    // Update quotes display
+    function updateQuoteDisplay(symbol) {
+        const marketQuotes = quotes[symbol] || [];
+        const quoteBoxes = quoteContainer.querySelectorAll('.quote-box');
+        
+        // Update the quote boxes with the latest quotes
+        quoteBoxes.forEach((box, index) => {
+            if (index < marketQuotes.length) {
+                const q = marketQuotes[index];
+                box.textContent = q.quote.toFixed(q.pip_size);
+                box.classList.toggle('quote-trigger', q.isTrigger);
+            } else {
+                box.textContent = '-';
+                box.classList.remove('quote-trigger');
+            }
+        });
+    }
+
+    // Get current streak information (kept for potential logging, but not used for type selection)
+    function getCurrentStreak() {
+        if (tradeOutcomes.length === 0) return { type: null, count: 0 };
+        
+        const lastOutcome = tradeOutcomes[tradeOutcomes.length - 1];
+        let count = 1;
+        
+        for (let i = tradeOutcomes.length - 2; i >= 0; i--) {
+            if (tradeOutcomes[i] === lastOutcome) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        
+        return { type: lastOutcome, count: count };
+    }
+
+    // Determine contract type: always use user-selected, no change on streak/loss
+    function determineContractType() {
+        return currentContract.type;
+    }
+
+    // Purchase generic contract (Odd/Even)
+    function purchaseContract() {
+        if (!isDerivConnected) {
+            addLog('Not connected to Deriv API', 'error');
+            return;
+        }
+
+        const contractType = determineContractType();
+        const stake = martingaleSteps[currentMartingaleLevel].stake;
+        
+        const buyRequest = {
+            buy: 1,
+            price: stake,
+            parameters: {
+                amount: stake,
+                basis: "stake",
+                contract_type: contractType,
+                currency: "USD",
+                duration: currentContract.duration,
+                duration_unit: "t",
+                symbol: currentContract.market
+            }
+        };
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify(buyRequest));
+            addLog(`Purchasing ${contractType === 'DIGITODD' ? 'Odd' : (contractType === 'DIGITEVEN' ? 'Even' : contractType)} contract on ${currentContract.market} with stake $${stake.toFixed(2)}`);
+        } else {
+            addLog('WebSocket not open', 'error');
+        }
+    }
+
+    // Purchase DIGITDIFF contract with a specific barrier (digit to compare against)
+    function purchaseDigitDiff(barrier) {
+        if (!isDerivConnected) {
+            addLog('Not connected to Deriv API', 'error');
+            return;
+        }
+
+        const stake = martingaleSteps[currentMartingaleLevel].stake;
+        const buyRequest = {
+            buy: 1,
+            price: stake,
+            parameters: {
+                amount: stake,
+                basis: "stake",
+                contract_type: 'DIGITDIFF',
+                barrier: String(barrier),
+                currency: "USD",
+                duration: currentContract.duration,
+                duration_unit: "t",
+                symbol: currentContract.market
+            }
+        };
+
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify(buyRequest));
+            addLog(`Purchasing DIGITDIFF (Differs) contract on ${currentContract.market} with stake $${stake.toFixed(2)} and barrier ${barrier}`);
+        } else {
+            addLog('WebSocket not open', 'error');
+        }
+    }
+
+    // Process trade outcome for a specific contract
+    function processTradeOutcome(contract, isWin) {
+        if (isWin) {
+            addLog(`Contract WON: +$${contract.payout.toFixed(2)} (level ${contract.level + 1})`, 'info');
+            tradeOutcomes.push('win');
+            currentMartingaleLevel = 0; // Reset to first level after win
+        } else {
+            addLog(`Contract LOST: -$${contract.stake.toFixed(2)} (level ${contract.level + 1})`, 'warning');
+            tradeOutcomes.push('loss');
+            
+            // Move to next martingale level if available
+            if (currentMartingaleLevel < martingaleSteps.length - 1) {
+                currentMartingaleLevel++;
+            }
+        }
+        
+        // Update UI
+        updateMartingaleDisplay();
+        
+        // Update streak information
+        currentStreak = getCurrentStreak();
+        
+        // Check if we should stop based on profit/loss
+        const netProfit = currentBalance - initialBalance;
+        if (isBotRunning) {
+            if (netProfit >= currentContract.takeProfit) {
+                addLog('Take profit reached, stopping bot', 'info');
+                stopBot();
+            } else if (netProfit <= -currentContract.stopLoss) {
+                addLog('Stop loss reached, stopping bot', 'warning');
+                stopBot();
+            }
+        }
+        
+        addLog('Ready for next trade', 'info');
+    }
+
+    // Connect to WebSocket
+    function connectWebSocket() {
+        ws = new WebSocket(`wss://ws.derivws.com/websockets/v3?app_id=${APP_ID}`);
+
+        ws.onopen = () => {
+            addLog('WebSocket connected');
+            ws.send(JSON.stringify({ authorize: TOKEN }));
+            pingTimer = setInterval(() => ws.send(JSON.stringify({ ping: 1 })), PING_INTERVAL);
+        };
+
+        ws.onmessage = (msg) => {
+            const data = JSON.parse(msg.data);
+
+            if (data.error) {
+                addLog(`Error: ${data.error.message}`, 'error');
+                return;
+            }
+
+            if (data.msg_type === 'authorize') {
+                updateConnectionStatus(true);
+                addLog('Authorized successfully');
+                initialBalance = data.authorize.balance;
+                currentBalance = initialBalance;
+                balanceValue.textContent = `$${currentBalance.toFixed(2)}`;
+                ws.send(JSON.stringify({ balance: 1, subscribe: 1 }));
+                ws.send(JSON.stringify({ proposal_open_contract: 1, subscribe: 1 }));
+                subscribeToTicks();
+            } else if (data.msg_type === 'balance') {
+                currentBalance = data.balance.balance;
+                balanceValue.textContent = `$${currentBalance.toFixed(2)}`;
+            } else if (data.msg_type === 'tick') {
+                processTickData(data.tick);
+            } else if (data.msg_type === 'buy') {
+                const contractInfo = {
+                    id: data.buy.contract_id,
+                    level: currentMartingaleLevel,
+                    stake: martingaleSteps[currentMartingaleLevel].stake,
+                    payout: martingaleSteps[currentMartingaleLevel].payout
+                };
+                activeContracts.push(contractInfo);
+                addLog(`Contract purchased: ID ${data.buy.contract_id} at level ${currentMartingaleLevel + 1}`);
+            } else if (data.msg_type === 'proposal_open_contract') {
+                if (data.proposal_open_contract && activeContracts.some(c => c.id === data.proposal_open_contract.contract_id)) {
+                    const contract = activeContracts.find(c => c.id === data.proposal_open_contract.contract_id);
+                    const status = data.proposal_open_contract.status;
+                    if (status === 'sold' || status === 'won' || status === 'lost') {
+                        const profit = parseFloat(data.proposal_open_contract.profit);
+                        const isWin = profit > 0;
+                        processTradeOutcome(contract, isWin);
+                        // Remove from active contracts
+                        activeContracts = activeContracts.filter(c => c.id !== contract.id);
+                    }
+                }
+            } else if (data.msg_type === 'subscription') {
+                // Store the subscription ID for later use
+                subscriptionId = data.subscription.id;
+                addLog(`Subscribed to ticks with ID: ${subscriptionId}`);
+            }
+        };
+
+        ws.onclose = () => {
+            updateConnectionStatus(false);
+            addLog('WebSocket closed, reconnecting...');
+            clearInterval(pingTimer);
+            setTimeout(connectWebSocket, RECONNECT_DELAY);
+        };
+
+        ws.onerror = (err) => {
+            addLog('WebSocket error', 'error');
+        };
+    }
+
+    // Process tick data
+    function processTickData(tick) {
+        const { symbol, quote, pip_size = 2 } = tick;
+        
+        // Only process data for the selected market
+        if (symbol !== currentContract.market) return;
+        
+        currentPrice = quote;
+        const pipSize = getPipSize(symbol);
+        
+        // Update current price display
+        if (currentPriceDisplay) {
+            currentPriceDisplay.textContent = quote.toFixed(pipSize);
+        }
+        
+        // Check if this is a trigger quote
+        const isTrigger = isTriggerQuote(symbol, quote, pipSize);
+        
+        // Store the quote
+        quotes[symbol].unshift({ 
+            quote: quote, 
+            pip_size: pipSize, 
+            isTrigger: isTrigger 
+        });
+        
+        // Keep only the last 4 quotes
+        if (quotes[symbol].length > 4) {
+            quotes[symbol].pop();
+        }
+        
+        // Update quote display
+        updateQuoteDisplay(symbol);
+        
+        // Resolve any pending simulation first
+        if (pendingSimulation) {
+            const lastDigit = Math.floor((quote % 1) * Math.pow(10, pipSize) ) % 10;
+            const isWin = lastDigit !== pendingSimulation.barrier;
+            const outcome = isWin ? 'win' : 'loss';
+            const color = isWin ? 'blue' : 'red';
+            virtualOutcomes.push(outcome);
+            addLog(`Simulation result: <span style="color: ${color};">fake ${isWin ? 'won' : 'loss'}</span>`, 'info');
+            pendingSimulation = null;
+
+            if (virtualOutcomes.length >= 3) {
+                const last3 = virtualOutcomes.slice(-3);
+                if (last3[0] === 'loss' && last3[1] === 'win' && last3[2] === 'win') {
+                    isNextReal = true;
+                    addLog('Pattern detected: L W W - Next trigger will be a real trade', 'info');
+                }
+            }
+        }
+
+        // If bot is running, and this is a trigger quote
+        if (isBotRunning && isTrigger) {
+            addLog(`TRIGGER DETECTED: ${quote.toFixed(pipSize)} for ${symbol}`, 'info');
+
+            if (currentContract.type === 'DIGITDIFF') {
+                const fracStr = (quote - Math.floor(quote)).toFixed(pipSize).split('.')[1] || '';
+                const midIndex = Math.floor(fracStr.length / 2);
+                const middleDigit = parseInt(fracStr[midIndex], 10);
+                if (Number.isNaN(middleDigit)) {
+                    addLog('Could not determine middle digit for DIGITDIFF', 'error');
+                    return;
+                }
+                lastDiffersBarrier = middleDigit;
+                lastDiffersBarrierEl.textContent = String(lastDiffersBarrier);
+
+                if (isStepperApplied) {
+                    if (isNextReal) {
+                        purchaseDigitDiff(lastDiffersBarrier);
+                        isNextReal = false;
+                    } else {
+                        pendingSimulation = { barrier: lastDiffersBarrier };
+                        addLog(`Simulating DIGITDIFF with barrier ${lastDiffersBarrier}`, 'info');
+                    }
+                } else {
+                    purchaseDigitDiff(lastDiffersBarrier);
+                }
+            } else {
+                purchaseContract();
+            }
+        }
+    }
+
+    // Subscribe to ticks for current market
+    function subscribeToTicks() {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            // Forget previous subscription if it exists
+            if (subscriptionId) {
+                ws.send(JSON.stringify({ forget: subscriptionId }));
+                addLog(`Unsubscribed from previous ticks: ${subscriptionId}`);
+                subscriptionId = null;
+            }
+            
+            // Subscribe to current market
+            ws.send(JSON.stringify({ 
+                ticks: currentContract.market,
+                subscribe: 1
+            }));
+            addLog(`Subscribed to ${currentContract.market} ticks`);
+        }
+    }
+
+    // Update contract parameters
+    updateContractBtn.addEventListener('click', () => {
+        const oldMarket = currentContract.market;
+        currentContract.market = document.getElementById('market').value;
+        currentContract.type = document.getElementById('contractType').value;
+        currentContract.duration = parseInt(document.getElementById('duration').value);
+        currentContract.takeProfit = parseFloat(document.getElementById('takeProfit').value);
+        currentContract.stopLoss = parseFloat(document.getElementById('stopLoss').value);
+        
+        if (oldMarket !== currentContract.market && ws && ws.readyState === WebSocket.OPEN) {
+            subscribeToTicks();
+        }
+        
+        updateContractDisplay();
+        addLog('Contract parameters updated');
+    });
+
+    // Test contract (send proposal for preview)
+    testContractBtn.addEventListener('click', () => {
+        addLog('Testing contract with current parameters...', 'warning');
+        const stake = martingaleSteps[currentMartingaleLevel].stake;
+        const proposalRequest = {
+            proposal: 1,
+            amount: stake,
+            basis: "stake",
+            contract_type: currentContract.type,
+            currency: "USD",
+            duration: currentContract.duration,
+            duration_unit: "t",
+            symbol: currentContract.market
+        };
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify(proposalRequest));
+        }
+    });
+
+    // Apply Stepper Strategy
+    applyStepperBtn.addEventListener('click', () => {
+        if (isStepperApplied) {
+            // Disable
+            isStepperApplied = false;
+            applyStepperBtn.innerHTML = '<b><i>Apply Stepper Strategy</i></b>';
+            addLog('Stepper strategy disabled', 'warning');
+        } else {
+            // Apply
+            isStepperApplied = true;
+            applyStepperBtn.innerHTML = '<b><i>Disable Stepper Strategy</i></b>';
+            addLog('stepper says = (1l - 2w). contact 0742277252 for adjustments', 'info');
+        }
+    });
+
+    // Start the trading bot
+    startBotBtn.addEventListener('click', () => {
+        if (!isDerivConnected) {
+            addLog('Please wait for connection to complete', 'error');
+            return;
+        }
+        
+        isBotRunning = true;
+        startBotBtn.disabled = true;
+        stopBotBtn.disabled = false;
+        virtualOutcomes = [];
+        isNextReal = false;
+        pendingSimulation = null;
+        
+        addLog('Starting trading bot...');
+        addLog('Monitoring price movements for trigger conditions...');
+
+        // If user selected DIGITDIFF, notify them that middle-digit barrier mode is active
+        if (currentContract.type === 'DIGITDIFF') {
+            addLog('Differs mode active: bot will purchase DIGITDIFF using the middle fractional digit as barrier when a trigger occurs', 'info');
+        }
+    });
+
+    // Stop the trading bot
+    stopBotBtn.addEventListener('click', stopBot);
+
+    function stopBot() {
+        isBotRunning = false;
+        startBotBtn.disabled = false;
+        stopBotBtn.disabled = true;
+        addLog('Trading bot stopped');
+    }
+
+    // Initialize the page
+    function initializeApp() {
+        addLog('Initializing connection to Deriv API...');
+        connectWebSocket();
+        updateContractDisplay();
+        
+        // Initialize quotes for all markets
+        MARKETS.forEach(market => {
+            quotes[market] = [];
+        });
+    }
+
+    // Start the application
+    initializeApp();
+</script></body>
+</html>
