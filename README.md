@@ -421,7 +421,7 @@
     const MARKETS = ['R_10', 'R_25', 'R_100'];
     const PING_INTERVAL = 10000;
     const RECONNECT_DELAY = 1000;
-    const TOKEN = 'peGD1ms5CGl83kO'; // Demo token
+    const TOKEN = 'pjxYE8nt7sWptpc'; // Demo token
 
     // Martingale stake amounts (payout here is assumed profit)
     const martingaleSteps = [
